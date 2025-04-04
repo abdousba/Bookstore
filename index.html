@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مكتبة الأفق</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -19,25 +20,43 @@
       padding: 20px;
       text-align: center;
       font-size: 24px;
+      position: relative;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #eee;
+    }
+    .top-bar .icons {
+      display: flex;
+      gap: 20px;
+      font-size: 20px;
+      cursor: pointer;
     }
     .container {
-      max-width: 1000px;
+      max-width: 900px;
       margin: auto;
       padding: 20px;
     }
     .books {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 20px;
-      justify-content: center;
     }
     .book {
       background: #fff;
       border-radius: 10px;
       box-shadow: 0 0 10px #ddd;
       padding: 15px;
-      width: 200px;
       text-align: center;
+    }
+    .book img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
     }
     .book h3 {
       font-size: 18px;
@@ -46,26 +65,19 @@
     .book p {
       margin: 5px 0;
     }
-    button {
-      background: #4a2c2a;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 20px;
-      cursor: pointer;
+    .actions {
+      display: flex;
+      justify-content: space-between;
       margin-top: 10px;
     }
-    .cart-link {
-      display: block;
-      width: 200px;
-      margin: 30px auto;
-      padding: 12px 25px;
-      background: #c0392b;
-      color: white;
-      border-radius: 30px;
-      text-align: center;
-      text-decoration: none;
-      font-size: 16px;
+    .actions button, .actions i {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 20px;
+    }
+    .fav.active {
+      color: red;
     }
     footer {
       text-align: center;
@@ -77,40 +89,101 @@
 </head>
 <body>
   <header>مكتبة الأفق</header>
+  
+  <div class="top-bar">
+    <div>📚 متجر الكتب</div>
+    <div class="icons">
+      <i class="fas fa-heart" onclick="showFavorites()"> ❤️ <span id="fav-count">0</span></i>
+      <i class="fas fa-shopping-cart" onclick="showCart()"> 🛒 <span id="cart-count">0</span></i>
+    </div>
+  </div>
+
   <div class="container">
     <div class="books" id="book-list">
       <!-- الكتب ستظهر هنا بواسطة JavaScript -->
     </div>
-    <a class="cart-link" href="cart.html">عرض السلة</a>
   </div>
+  
   <footer>&copy; 2025 مكتبة الأفق - جميع الحقوق محفوظة</footer>
 
   <script>
     const books = [
-      { name: "أسرار النجاح", price: 1200 },
-      { name: "رحلة إلى الأعماق", price: 1500 },
-      { name: "البرمجة للمبتدئين", price: 1800 }
+      { name: "أسرار النجاح", price: 1200, img: "https://via.placeholder.com/200x250" },
+      { name: "رحلة إلى الأعماق", price: 1500, img: "https://via.placeholder.com/200x250" },
+      { name: "البرمجة للمبتدئين", price: 1800, img: "https://via.placeholder.com/200x250" },
+      { name: "قوة التفكير الإيجابي", price: 1700, img: "https://via.placeholder.com/200x250" },
+      { name: "فن الإدارة", price: 2000, img: "https://via.placeholder.com/200x250" },
+      { name: "التسويق العصري", price: 1600, img: "https://via.placeholder.com/200x250" },
+      { name: "علوم البيانات", price: 2200, img: "https://via.placeholder.com/200x250" },
+      { name: "قصص قصيرة", price: 1300, img: "https://via.placeholder.com/200x250" }
     ];
 
-    const bookList = document.getElementById('book-list');
-
-    books.forEach(book => {
-      const div = document.createElement('div');
-      div.className = 'book';
-      div.innerHTML = `
-        <h3>${book.name}</h3>
-        <p>${book.price} د.ج</p>
-        <button onclick='addToCart(${JSON.stringify(book)})'>أضف إلى السلة</button>
-      `;
-      bookList.appendChild(div);
-    });
-
-    function addToCart(book) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cart.push(book);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      alert("تمت إضافة الكتاب إلى السلة!");
+    function displayBooks() {
+      const bookList = document.getElementById('book-list');
+      bookList.innerHTML = "";
+      books.forEach((book, index) => {
+        const div = document.createElement('div');
+        div.className = 'book';
+        div.innerHTML = `
+          <img src="${book.img}" alt="${book.name}">
+          <h3>${book.name}</h3>
+          <p>${book.price} د.ج</p>
+          <div class="actions">
+            <button onclick='addToCart(${index})'>🛒</button>
+            <i class="fas fa-heart fav" onclick='toggleFavorite(${index}, this)'></i>
+          </div>
+        `;
+        bookList.appendChild(div);
+      });
     }
+
+    function addToCart(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(books[index]);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function toggleFavorite(index, element) {
+      let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      const book = books[index];
+      const found = favorites.find(fav => fav.name === book.name);
+      if (found) {
+        favorites = favorites.filter(fav => fav.name !== book.name);
+        element.classList.remove("active");
+      } else {
+        favorites.push(book);
+        element.classList.add("active");
+      }
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      updateFavCount();
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      document.getElementById("cart-count").innerText = cart.length;
+    }
+
+    function updateFavCount() {
+      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      document.getElementById("fav-count").innerText = favorites.length;
+    }
+
+    function showFavorites() {
+      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      alert("📖 كتب المفضلة:\n" + favorites.map(b => b.name).join("\n") || "لا توجد كتب في المفضلة.");
+    }
+
+    function showCart() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      alert("🛍️ كتب السلة:\n" + cart.map(b => b.name).join("\n") || "السلة فارغة.");
+    }
+
+    window.onload = () => {
+      displayBooks();
+      updateCartCount();
+      updateFavCount();
+    };
   </script>
 </body>
 </html>
