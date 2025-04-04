@@ -6,7 +6,7 @@
   <title>مكتبة الأفق</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>  
+  <style>
     body {
       font-family: 'Cairo', sans-serif;
       margin: 0;
@@ -14,7 +14,6 @@
       background-color: #fdfdfd;
       color: #333;
     }
-    
     header {
       background-color: #4a2c2a;
       color: white;
@@ -28,12 +27,39 @@
       align-items: center;
       padding: 10px 20px;
       background: #eee;
+      position: relative;
     }
     .top-bar .icons {
       display: flex;
       gap: 20px;
       font-size: 20px;
       cursor: pointer;
+    }
+    .category-menu {
+      position: absolute;
+      top: 100%;
+      right: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      z-index: 100;
+    }
+    .category-menu a {
+      padding: 10px;
+      text-decoration: none;
+      color: #333;
+      border-bottom: 1px solid #eee;
+    }
+    .category-menu a:hover {
+      background-color: #f5f5f5;
+    }
+    .menu-btn {
+      cursor: pointer;
+      font-size: 22px;
     }
     .container {
       max-width: 900px;
@@ -86,90 +112,40 @@
       background: #eee;
       margin-top: 40px;
     }
-    <style>
-  body {
-    font-family: 'Cairo', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #fdfdfd;
-    color: #333;
-  }
-
-  /* باقي التنسيقات */
-  
-  .menu {
-    position: relative;
-  }
-
-  .menu button {
-    background: #4a2c2a;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-
-  .category-menu {
-    display: none;
-    position: absolute;
-    top: 45px;
-    right: 0;
-    background: white;
-    border: 1px solid #ccc;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 180px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    z-index: 10;
-  }
-
-  .category-menu li {
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    text-align: right;
-  }
-
-  .category-menu li:hover {
-    background: #f0f0f0;
-  }
-
   </style>
 </head>
 <body>
   <header>مكتبة الأفق</header>
   
   <div class="top-bar">
+    <div class="menu-btn" onclick="toggleCategoryMenu()"><i class="fa-solid fa-bars"></i></div>
     <div>📚 متجر الكتب</div>
     <div class="icons">
       <i class="fa-solid fa-heart" onclick="showFavorites()"> <span id="fav-count">0</span></i>
       <i class="fa-solid fa-cart-shopping" onclick="showCart()"> <span id="cart-count">0</span></i>
     </div>
-    <div class="menu">
-    <button onclick="toggleCategoryMenu()">☰</button>
-    <ul class="category-menu" id="category-menu">
-      <li>روايات</li>
-      <li>تنمية بشرية</li>
-      <li>علوم شرعية</li>
-      <li>أدب عربي</li>
-      <li>لغات أجنبية</li>
-    </ul>
-  </div>
-</div>
+
+    <div class="category-menu" id="category-menu">
+      <a href="#">روايات</a>
+      <a href="#">تنمية بشرية</a>
+      <a href="#">علوم شرعية</a>
+      <a href="#">أدب عربي</a>
+      <a href="#">لغات أجنبية</a>
+    </div>
   </div>
 
   <div class="container">
-    <div class="books" id="book-list">
-      <!-- سيتم توليد الكتب هنا -->
-    </div>
+    <div class="books" id="book-list"></div>
   </div>
   
   <footer>&copy; 2025 مكتبة الأفق - جميع الحقوق محفوظة</footer>
 
   <script>
+    function toggleCategoryMenu() {
+      const menu = document.getElementById('category-menu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
     const books = [
       { name: "أسرار النجاح", price: 1200, img: "https://via.placeholder.com/200x250" },
       { name: "رحلة إلى الأعماق", price: 1500, img: "https://via.placeholder.com/200x250" },
