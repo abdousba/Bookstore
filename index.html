@@ -2,41 +2,115 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مكتبة الأفق</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background-color: #fdfdfd; color: #222; }
-    header, footer { background-color: #4a2c2a; color: white; padding: 20px; text-align: center; font-size: 24px; }
-    .hero { background: linear-gradient(to right, #f7c59f, #f6abb6); padding: 60px 20px; text-align: center; font-size: 32px; font-weight: bold; }
-    .search-bar { margin: 30px auto; text-align: center; }
-    .search-bar input { padding: 10px 15px; width: 60%; border: 1px solid #ccc; border-radius: 25px; font-size: 16px; }
-    .categories { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin: 20px 0; }
-    .category { background: #f6abb6; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; cursor: pointer; }
-    .books-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 40px 20px; }
-    .book-card { background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; text-align: center; }
-    .book-card img { max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
-    .book-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-    .book-price { color: #c0392b; font-size: 16px; margin-bottom: 10px; }
-    .add-btn { background: #4a2c2a; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    header {
+      background-color: #4a2c2a;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    .books {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .book {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ddd;
+      padding: 15px;
+      width: 200px;
+      text-align: center;
+    }
+    .book h3 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .book p {
+      margin: 5px 0;
+    }
+    button {
+      background: #4a2c2a;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .cart-link {
+      display: block;
+      width: 200px;
+      margin: 30px auto;
+      padding: 12px 25px;
+      background: #c0392b;
+      color: white;
+      border-radius: 30px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #eee;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
   <header>مكتبة الأفق</header>
-  <div class="hero">اكتشف عالماً من المعرفة</div>
-  <div class="search-bar"><input type="text" placeholder="ابحث عن كتاب..." /></div>
-  <div class="categories">
-    <div class="category">جميع الكتب</div><div class="category">روايات</div>
-    <div class="category">تنمية ذاتية</div><div class="category">تاريخ</div><div class="category">علوم</div>
-  </div>
-  <div class="books-section">
-    <div class="book-card">
-      <a href="book-details.html"><img src="https://via.placeholder.com/200x250" alt="كتاب 1" /></a>
-      <div class="book-title">كتاب تطوير الذات</div>
-      <div class="book-price">45 ر.س</div>
-      <a href="cart.html"><button class="add-btn">أضف إلى السلة</button></a>
+  <div class="container">
+    <div class="books" id="book-list">
+      <!-- الكتب ستظهر هنا بواسطة JavaScript -->
     </div>
+    <a class="cart-link" href="cart.html">عرض السلة</a>
   </div>
   <footer>&copy; 2025 مكتبة الأفق - جميع الحقوق محفوظة</footer>
+
+  <script>
+    const books = [
+      { name: "أسرار النجاح", price: 1200 },
+      { name: "رحلة إلى الأعماق", price: 1500 },
+      { name: "البرمجة للمبتدئين", price: 1800 }
+    ];
+
+    const bookList = document.getElementById('book-list');
+
+    books.forEach(book => {
+      const div = document.createElement('div');
+      div.className = 'book';
+      div.innerHTML = `
+        <h3>${book.name}</h3>
+        <p>${book.price} د.ج</p>
+        <button onclick='addToCart(${JSON.stringify(book)})'>أضف إلى السلة</button>
+      `;
+      bookList.appendChild(div);
+    });
+
+    function addToCart(book) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(book);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("تمت إضافة الكتاب إلى السلة!");
+    }
+  </script>
 </body>
 </html>
