@@ -16,14 +16,14 @@
       text-align: center;
     }
     form {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px #ccc;
     }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
@@ -38,33 +38,158 @@
       border-radius: 25px;
       cursor: pointer;
     }
+    .summary {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    .summary h3 {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
   <h1>إتمام الطلب</h1>
   <form id="checkout-form">
     <label>الاسم الكامل:</label>
-    <input type="text" required />
-    
+    <input type="text" id="fullname" required />
+
     <label>رقم الهاتف:</label>
-    <input type="tel" required />
-    
-        <label>البريد الالكتروني:</label>
-    <input type="email" required />
-    
+    <input type="tel" id="phone" required />
+
+    <label>البريد الالكتروني:</label>
+    <input type="email" id="email" required />
+
     <label>العنوان:</label>
     <textarea rows="3" required></textarea>
-    
+
+    <label>الولاية:</label>
+    <select required>
+      <option value="">-- اختر الولاية --</option>
+      <option>أدرار</option>
+      <option>الشلف</option>
+      <option>الأغواط</option>
+      <option>أم البواقي</option>
+      <option>باتنة</option>
+      <option>بجاية</option>
+      <option>بسكرة</option>
+      <option>بشار</option>
+      <option>البليدة</option>
+      <option>البويرة</option>
+      <option>تمنراست</option>
+      <option>تبسة</option>
+      <option>تلمسان</option>
+      <option>تيارت</option>
+      <option>تيزي وزو</option>
+      <option>الجزائر</option>
+      <option>الجلفة</option>
+      <option>جيجل</option>
+      <option>سطيف</option>
+      <option>سعيدة</option>
+      <option>سكيكدة</option>
+      <option>سيدي بلعباس</option>
+      <option>عنابة</option>
+      <option>قالمة</option>
+      <option>قسنطينة</option>
+      <option>المدية</option>
+      <option>مستغانم</option>
+      <option>المسيلة</option>
+      <option>معسكر</option>
+      <option>ورقلة</option>
+      <option>وهران</option>
+      <option>البيض</option>
+      <option>إليزي</option>
+      <option>برج بوعريريج</option>
+      <option>بومرداس</option>
+      <option>الطارف</option>
+      <option>تندوف</option>
+      <option>تيسمسيلت</option>
+      <option>الوادي</option>
+      <option>خنشلة</option>
+      <option>سوق أهراس</option>
+      <option>تيبازة</option>
+      <option>ميلة</option>
+      <option>عين الدفلى</option>
+      <option>النعامة</option>
+      <option>عين تموشنت</option>
+      <option>غرداية</option>
+      <option>غليزان</option>
+      <option>تميمون</option>
+      <option>برج باجي مختار</option>
+      <option>أولاد جلال</option>
+      <option>بني عباس</option>
+      <option>عين صالح</option>
+      <option>عين قزام</option>
+      <option>تقرت</option>
+      <option>جانت</option>
+      <option>المغير</option>
+      <option>المنيعة</option>
+    </select>
+
+    <label>نوع التوصيل:</label>
+    <select required>
+      <option value="">-- اختر نوع التوصيل --</option>
+      <option>إلى المنزل</option>
+      <option>إلى المكتب</option>
+    </select>
+
+    <div class="summary" id="order-summary">
+      <!-- تفاصيل الطلب ستظهر هنا -->
+    </div>
+
     <button type="submit">إرسال الطلب</button>
   </form>
 
   <script>
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function generateOrderNumber() {
+      return 'ORD-' + Math.floor(Math.random() * 1000000);
+    }
+
+    function getTodayDate() {
+      const date = new Date();
+      return date.toLocaleDateString("ar-DZ");
+    }
+
+    function getTotalPrice() {
+      return cart.reduce((sum, book) => sum + book.price, 0);
+    }
+
+    function renderSummary() {
+      const fullName = document.getElementById("fullname").value;
+      const phone = document.getElementById("phone").value;
+      const orderNumber = generateOrderNumber();
+      const total = getTotalPrice();
+      const date = getTodayDate();
+
+      let bookDetails = cart.map(book => `- ${book.name} (${book.price} د.ج)`).join("<br>");
+
+      document.getElementById("order-summary").innerHTML = `
+        <h3>ملخص الطلب</h3>
+        <p><strong>رقم الطلب:</strong> ${orderNumber}</p>
+        <p><strong>الاسم:</strong> ${fullName}</p>
+        <p><strong>رقم الهاتف:</strong> ${phone}</p>
+        <p><strong>التاريخ:</strong> ${date}</p>
+        <p><strong>طريقة الدفع:</strong> الدفع عند الاستلام</p>
+        <p><strong>السعر الكلي:</strong> ${total} د.ج</p>
+        <p><strong>تفاصيل الكتب:</strong><br>${bookDetails}</p>
+      `;
+    }
+
+    document.getElementById("fullname").addEventListener("input", renderSummary);
+    document.getElementById("phone").addEventListener("input", renderSummary);
+
     document.getElementById("checkout-form").addEventListener("submit", function(e) {
       e.preventDefault();
       alert("تم إرسال الطلب بنجاح!");
       localStorage.removeItem("cart");
       window.location.href = "index.html";
     });
+
+    renderSummary();
   </script>
 </body>
 </html>
