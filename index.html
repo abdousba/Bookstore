@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مكتبة الأفق</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>  
     body {
       font-family: 'Cairo', sans-serif;
       margin: 0;
@@ -14,13 +14,13 @@
       background-color: #fdfdfd;
       color: #333;
     }
+    
     header {
       background-color: #4a2c2a;
       color: white;
       padding: 20px;
       text-align: center;
       font-size: 24px;
-      position: relative;
     }
     .top-bar {
       display: flex;
@@ -68,13 +68,14 @@
     .actions {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-top: 10px;
     }
     .actions button, .actions i {
       cursor: pointer;
       border: none;
       background: none;
-      font-size: 20px;
+      font-size: 22px;
     }
     .fav.active {
       color: red;
@@ -85,6 +86,57 @@
       background: #eee;
       margin-top: 40px;
     }
+    <style>
+  body {
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fdfdfd;
+    color: #333;
+  }
+
+  /* باقي التنسيقات */
+  
+  .menu {
+    position: relative;
+  }
+
+  .menu button {
+    background: #4a2c2a;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .category-menu {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 180px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+
+  .category-menu li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    text-align: right;
+  }
+
+  .category-menu li:hover {
+    background: #f0f0f0;
+  }
+
   </style>
 </head>
 <body>
@@ -93,14 +145,25 @@
   <div class="top-bar">
     <div>📚 متجر الكتب</div>
     <div class="icons">
-      <i class="fas fa-heart" onclick="showFavorites()"> ❤️ <span id="fav-count">0</span></i>
-      <i class="fas fa-shopping-cart" onclick="showCart()"> 🛒 <span id="cart-count">0</span></i>
+      <i class="fa-solid fa-heart" onclick="showFavorites()"> <span id="fav-count">0</span></i>
+      <i class="fa-solid fa-cart-shopping" onclick="showCart()"> <span id="cart-count">0</span></i>
     </div>
+    <div class="menu">
+    <button onclick="toggleCategoryMenu()">☰</button>
+    <ul class="category-menu" id="category-menu">
+      <li>روايات</li>
+      <li>تنمية بشرية</li>
+      <li>علوم شرعية</li>
+      <li>أدب عربي</li>
+      <li>لغات أجنبية</li>
+    </ul>
+  </div>
+</div>
   </div>
 
   <div class="container">
     <div class="books" id="book-list">
-      <!-- الكتب ستظهر هنا بواسطة JavaScript -->
+      <!-- سيتم توليد الكتب هنا -->
     </div>
   </div>
   
@@ -121,7 +184,10 @@
     function displayBooks() {
       const bookList = document.getElementById('book-list');
       bookList.innerHTML = "";
+      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
       books.forEach((book, index) => {
+        const isFavorite = favorites.some(fav => fav.name === book.name);
         const div = document.createElement('div');
         div.className = 'book';
         div.innerHTML = `
@@ -129,8 +195,8 @@
           <h3>${book.name}</h3>
           <p>${book.price} د.ج</p>
           <div class="actions">
-            <button onclick='addToCart(${index})'>🛒</button>
-            <i class="fas fa-heart fav" onclick='toggleFavorite(${index}, this)'></i>
+            <button onclick='addToCart(${index})'><i class="fa-solid fa-cart-plus"></i></button>
+            <i class="fa-solid fa-heart fav ${isFavorite ? 'active' : ''}" onclick='toggleFavorite(${index}, this)'></i>
           </div>
         `;
         bookList.appendChild(div);
@@ -171,12 +237,12 @@
 
     function showFavorites() {
       const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-      alert("📖 كتب المفضلة:\n" + favorites.map(b => b.name).join("\n") || "لا توجد كتب في المفضلة.");
+      alert("📖 كتب المفضلة:\n" + (favorites.length ? favorites.map(b => b.name).join("\n") : "لا توجد كتب في المفضلة."));
     }
 
     function showCart() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      alert("🛍️ كتب السلة:\n" + cart.map(b => b.name).join("\n") || "السلة فارغة.");
+      alert("🛍️ كتب السلة:\n" + (cart.length ? cart.map(b => b.name).join("\n") : "السلة فارغة."));
     }
 
     window.onload = () => {
